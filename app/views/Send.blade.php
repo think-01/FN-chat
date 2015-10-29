@@ -43,14 +43,8 @@
             <label><input type="text" name="from"/>nadawca</label>
             <input type="submit" value="wyślij wiadomość"/>
         @else
-            <input type="hidden" name="room" value="{{ $users[0]['room'] }}"/>
-            <label>
-            <select name="from">
-                @foreach( $users as $user )
-                    <option value="{{ $user['user'] }}">{{ $user['user'] }}</option>
-                @endforeach
-            </select>
-            nadawca</label>
+            <pre>{{ print_r($users) }}</pre>
+
             <input type="submit" value="wyślij wiadomość"/>
             <a href="{{ URL::to('napiszwiadomosc') }}">wyślij wiadomość do innych odbiorców</a>
             <a href="{{ URL::to('konwersacja', $users[0]['room'] ) }}" target="blank">zobacz konwersację</a>
