@@ -54,25 +54,37 @@ class ChatController extends BaseController
         return View::make('Chat')->withChat( $chats );
     }
 
-    public function showSend()
+    public function showSend( $room = 0 )
     {
-        return View::make('Send');
+        if( $room > 0 ) $users = Subscription::where( 'room', '=', $room )->get()->toArray();
+        else $users = array();
+        return View::make('Send')->withUsers($users);
     }
 
-    public function showPostMessage()
+    public function showPostMessage( $room = 0 )
     {
         $data = Input::all();
         $from = trim( $data['from'] )*1;
-        $users = explode( ',', preg_replace('/[^0-9,]+/', '', $data['to'] ) );
-        array_push( $users, $from );
-        $users = array_unique( $users );
 
-        $r = $this->_send( $from, $users, $data['message'] );
+        if( $room > 0 ) $users = Subscription::where( 'room', '=', $room )->get()->toArray();
+        else $users = array();
+
+        if( array_key_exists( 'room', $data ) )
+        {
+            $r = $this->_send( $from, null, $data['message'], $data['room'] );
+        }
+        else
+        {
+            $users = explode( ',', preg_replace('/[^0-9,]+/', '', $data['to'] ) );
+            array_push( $users, $from );
+            $users = array_unique( $users );
+            $r = $this->_send( $from, $users, $data['message'] );
+        }
 
         if( $r->new )
-            return View::make('Send')->withSignal("New conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) created in");
+            return View::make('Send')->withSignal("New conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) created in")->withUsers($users);
         else
-            return View::make('Send')->withSignal("Adding to existing conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) in");
+            return View::make('Send')->withSignal("Adding to existing conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) in")->withUsers($users);
 
     }
 
@@ -99,11 +111,11 @@ class ChatController extends BaseController
 
     }
 
-    private function _send( $from, $users, $message )
+    private function _send( $from, $users, $message, $room = null )
     {
         $when = ( new DateTime() )->format('Y-m-d H:i:s');
 
-        $_room = Subscription::select("room")
+        $_room = $room != null ? $room : Subscription::select("room")
             ->whereIn('user', $users )
             ->groupBy('room')
             ->havingRaw('count(*) = ' . count($users) )
@@ -136,7 +148,7 @@ class ChatController extends BaseController
         else
         {
             $r = new Message;
-            $r->room = $_room->room;
+            $r->room = $room != null ? $room : $_room->room;
             $r->when = $when;
             $r->from = $from;
             $r->message = $message;

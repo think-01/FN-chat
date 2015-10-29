@@ -22,4 +22,6 @@ Route::get('wiadomosciuzytkownika/{id}', 'ChatController@showUserChats');
 Route::get('wiadomosciuzytkownika', 'ChatController@showUserChats');
 Route::get('konwersacja/{id}', 'ChatController@showChanel');
 Route::get('napiszwiadomosc', 'ChatController@showSend');
+Route::get('napiszwiadomosc/{room}', 'ChatController@showSend');
 Route::post('napiszwiadomosc', 'ChatController@showPostMessage');
+Route::post('napiszwiadomosc/{room}', 'ChatController@showPostMessage');

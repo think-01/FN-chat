@@ -24,6 +24,11 @@
             resize: none;
             height:300px;
         }
+        form a
+        {
+            padding: 3px 10px;
+            font-size: 14px;;
+        }
     </style>
     <script>
 
@@ -33,8 +38,23 @@
 @section('body')
     <form method="POST">
         <label><textarea name="message"></textarea>wiadomość</label>
-        <label><input type="text" name="to"/>odbiorcy</label>
-        <label><input type="text" name="from"/>nadawcy</label>
-        <input type="submit" value="wyślij wiadomość"/>
+        @if( count($users)==0 )
+            <label><input type="text" name="to"/>odbiorcy</label>
+            <label><input type="text" name="from"/>nadawca</label>
+            <input type="submit" value="wyślij wiadomość"/>
+        @else
+            <input type="hidden" name="room" value="{{ $users[0]['room'] }}"/>
+            <label>
+            <select name="from">
+                @foreach( $users as $user )
+                    <option value="{{ $user['user'] }}">{{ $user['user'] }}</option>
+                @endforeach
+            </select>
+            nadawca</label>
+            <input type="submit" value="wyślij wiadomość"/>
+            <a href="{{ URL::to('napiszwiadomosc') }}">wyślij wiadomość do innych odbiorców</a>
+            <a href="{{ URL::to('konwersacja', $users[0]['room'] ) }}" target="blank">zobacz konwersację</a>
+        @endif
+
     </form>
 @stop
