@@ -66,12 +66,12 @@ class ChatController extends BaseController
         $data = Input::all();
         $from = trim( $data['from'] )*1;
 
-        if( $room > 0 ) $users = Subscription::where( 'room', '=', $room )->get()->toArray();
-        else $users = array();
+        if( $room > 0 ) $_users = Subscription::where( 'room', '=', $room )->get()->toArray();
+        else $_users = array();
 
-        if( count($users) )
+        if( count($_users) )
         {
-            $room = $users[0]['room'];
+            $room = $_users[0]['room'];
             $r = $this->_send( $from, null, $data['message'], $room );
         }
         else
@@ -83,9 +83,9 @@ class ChatController extends BaseController
         }
 
         if( $r->new )
-            return View::make('Send')->withSignal("New conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) created in")->withUsers($users);
+            return View::make('Send')->withSignal("New conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) created in")->withUsers($_users);
         else
-            return View::make('Send')->withSignal("Adding to existing conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) in")->withUsers($users);
+            return View::make('Send')->withSignal("Adding to existing conversation ( <a href='".URL::to('konwersacja', $r->room)."'>#".$r->room."</a> ) in")->withUsers($_users);
 
     }
 
