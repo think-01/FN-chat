@@ -46,7 +46,7 @@
             <pre>{{ print_r($users) }}</pre>
             <input type="submit" value="wyślij wiadomość"/>
             <a href="{{ URL::to('napiszwiadomosc') }}">wyślij wiadomość do innych odbiorców</a>
-            <a href="{{ URL::to('konwersacja', $users[0]['room'] ) }}" target="blank">zobacz konwersację</a>
+
         @endif
 
     </form>
