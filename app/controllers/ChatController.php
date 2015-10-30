@@ -69,6 +69,8 @@ class ChatController extends BaseController
         if( $room > 0 ) $_users = Subscription::where( 'room', '=', $room )->get()->toArray();
         else $_users = array();
 
+        $data['message'] = substr( $data['message'],0,1000 );
+
         if( count($_users) )
         {
             $room = $_users[0]['room'];
